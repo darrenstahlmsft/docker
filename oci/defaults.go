@@ -51,6 +51,8 @@ func DefaultWindowsSpec() specs.Spec {
 	return specs.Spec{
 		Version: specs.Version,
 		Windows: &specs.Windows{},
+		Process: &specs.Process{},
+		Root:    &specs.Root{},
 	}
 }
 
@@ -68,6 +70,7 @@ func DefaultLinuxSpec() specs.Spec {
 	s := specs.Spec{
 		Version: specs.Version,
 		Process: &specs.Process{},
+		Root:    &specs.Root{},
 	}
 	s.Mounts = []specs.Mount{
 		{
@@ -107,11 +110,13 @@ func DefaultLinuxSpec() specs.Spec {
 			Options:     []string{"nosuid", "noexec", "nodev"},
 		},
 	}
-	s.Process.Capabilities = &specs.LinuxCapabilities{
-		Bounding:    defaultCapabilities(),
-		Permitted:   defaultCapabilities(),
-		Inheritable: defaultCapabilities(),
-		Effective:   defaultCapabilities(),
+	s.Process = &specs.Process{
+		Capabilities: &specs.LinuxCapabilities{
+			Bounding:    defaultCapabilities(),
+			Permitted:   defaultCapabilities(),
+			Inheritable: defaultCapabilities(),
+			Effective:   defaultCapabilities(),
+		},
 	}
 
 	s.Linux = &specs.Linux{
@@ -199,6 +204,11 @@ func DefaultLinuxSpec() specs.Spec {
 				},
 			},
 		},
+	}
+
+	// For LCOW support, populate a blank Windows spec
+	if runtime.GOOS == "windows" {
+		s.Windows = &specs.Windows{}
 	}
 
 	// For LCOW support, don't mask /sys/firmware
