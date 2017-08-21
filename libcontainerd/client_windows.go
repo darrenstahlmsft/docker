@@ -104,11 +104,10 @@ func (clnt *client) Create(containerID string, checkpoint string, checkpointDir 
 		logrus.Debugln("libcontainerd: client.Create() with spec", string(b))
 	}
 
-	// spec.Linux must be nill for Windows containers, but spec.Windows will be filled in regardless of container platform.
+	// spec.Linux must be nil for Windows containers, but spec.Windows will be filled in regardless of container platform.
 	// This is a temporary workaround due to LCOW requiring layer folder paths, which are stored under spec.Windows.
 	// TODO: @darrenstahlmsft fix this once the OCI spec is updated to support layer folder paths for LCOW
-	isWindows := spec.Linux == nil
-	if isWindows {
+	if spec.Linux == nil {
 		return clnt.createWindows(containerID, checkpoint, checkpointDir, spec, attachStdio, options...)
 	}
 	return clnt.createLinux(containerID, checkpoint, checkpointDir, spec, attachStdio, options...)
@@ -358,7 +357,7 @@ func (clnt *client) createLinux(containerID string, checkpoint string, checkpoin
 	}
 
 	// We must have least one layer in the spec
-	if spec.Windows.LayerFolders == nil || len(spec.Windows.LayerFolders) < 1 {
+	if spec.Windows.LayerFolders == nil || len(spec.Windows.LayerFolders) == 0 {
 		return fmt.Errorf("OCI spec is invalid - at least one LayerFolders must be supplied to the runtime")
 	}
 
