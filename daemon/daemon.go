@@ -142,6 +142,14 @@ func (daemon *Daemon) HasExperimental() bool {
 	return daemon.configStore != nil && daemon.configStore.Experimental
 }
 
+// GetGraphOptions returns the default graph options
+func (daemon *Daemon) GetGraphOptions() []string {
+	if daemon.configStore != nil {
+		return daemon.configStore.GraphOptions
+	}
+	return nil
+}
+
 func (daemon *Daemon) restore() error {
 	containers := make(map[string]*container.Container)
 

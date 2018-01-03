@@ -101,7 +101,7 @@ type Image interface {
 // ReleaseableLayer is an image layer that can be mounted and released
 type ReleaseableLayer interface {
 	Release() error
-	Mount() (containerfs.ContainerFS, error)
+	Mount(layerCreateOptions map[string]string) (containerfs.ContainerFS, error)
 	Commit(platform string) (ReleaseableLayer, error)
 	DiffID() layer.DiffID
 }

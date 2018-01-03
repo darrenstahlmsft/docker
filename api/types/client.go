@@ -181,6 +181,7 @@ type ImageBuildOptions struct {
 	Target      string
 	SessionID   string
 	Platform    string
+	StorageOpt  map[string]string
 }
 
 // ImageBuildResponse holds information

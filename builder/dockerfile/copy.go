@@ -166,7 +166,7 @@ func (o *copier) calcCopyInfo(origPath string, allowWildcards bool) ([]copyInfo,
 	// done on image Source?
 	if imageSource != nil {
 		var err error
-		o.source, err = imageSource.Source()
+		o.source, err = imageSource.Source(nil)
 		if err != nil {
 			return nil, errors.Wrapf(err, "failed to copy from %s", imageSource.ImageID())
 		}

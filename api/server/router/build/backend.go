@@ -16,6 +16,7 @@ type Backend interface {
 	PruneCache(context.Context) (*types.BuildCachePruneReport, error)
 }
 
-type experimentalProvider interface {
+type experimentalAndGraphOptionsProvider interface {
+	GetGraphOptions() []string
 	HasExperimental() bool
 }

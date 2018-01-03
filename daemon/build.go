@@ -26,7 +26,7 @@ type releaseableLayer struct {
 	rwLayer    layer.RWLayer
 }
 
-func (rl *releaseableLayer) Mount() (containerfs.ContainerFS, error) {
+func (rl *releaseableLayer) Mount(layerCreateOptions map[string]string) (containerfs.ContainerFS, error) {
 	var err error
 	var mountPath containerfs.ContainerFS
 	var chainID layer.ChainID
@@ -35,7 +35,12 @@ func (rl *releaseableLayer) Mount() (containerfs.ContainerFS, error) {
 	}
 
 	mountID := stringid.GenerateRandomID()
-	rl.rwLayer, err = rl.layerStore.CreateRWLayer(mountID, chainID, nil)
+	createOpts := &layer.CreateRWLayerOpts{
+		MountLabel: "",
+		InitFunc:   nil,
+		StorageOpt: layerCreateOptions,
+	}
+	rl.rwLayer, err = rl.layerStore.CreateRWLayer(mountID, chainID, createOpts)
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to create rwlayer")
 	}

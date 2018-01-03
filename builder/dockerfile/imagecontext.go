@@ -100,12 +100,12 @@ func newImageMount(image builder.Image, layer builder.ReleaseableLayer) *imageMo
 	return im
 }
 
-func (im *imageMount) Source() (builder.Source, error) {
+func (im *imageMount) Source(layerCreateOptions map[string]string) (builder.Source, error) {
 	if im.source == nil {
 		if im.layer == nil {
 			return nil, errors.Errorf("empty context")
 		}
-		mountPath, err := im.layer.Mount()
+		mountPath, err := im.layer.Mount(layerCreateOptions)
 		if err != nil {
 			return nil, errors.Wrapf(err, "failed to mount %s", im.image.ImageID())
 		}

@@ -187,7 +187,7 @@ func (b *Builder) performCopy(state *dispatchState, inst copyInstruction) error 
 		return errors.Wrapf(err, "failed to get destination image %q", state.imageID)
 	}
 
-	destInfo, err := createDestInfo(state.runConfig.WorkingDir, inst, imageMount, b.options.Platform)
+	destInfo, err := createDestInfo(state.runConfig.WorkingDir, inst, imageMount, b.options.StorageOpt, b.options.Platform)
 	if err != nil {
 		return err
 	}
@@ -292,7 +292,7 @@ func lookupGroup(groupStr, filepath string) (int, error) {
 	return groups[0].Gid, nil
 }
 
-func createDestInfo(workingDir string, inst copyInstruction, imageMount *imageMount, platform string) (copyInfo, error) {
+func createDestInfo(workingDir string, inst copyInstruction, imageMount *imageMount, storageOpt map[string]string, platform string) (copyInfo, error) {
 	// Twiddle the destination when it's a relative path - meaning, make it
 	// relative to the WORKINGDIR
 	dest, err := normalizeDest(workingDir, inst.dest, platform)
@@ -300,7 +300,7 @@ func createDestInfo(workingDir string, inst copyInstruction, imageMount *imageMo
 		return copyInfo{}, errors.Wrapf(err, "invalid %s", inst.cmdName)
 	}
 
-	destMount, err := imageMount.Source()
+	destMount, err := imageMount.Source(storageOpt)
 	if err != nil {
 		return copyInfo{}, errors.Wrapf(err, "failed to mount copy source")
 	}

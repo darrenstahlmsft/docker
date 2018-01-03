@@ -5,12 +5,12 @@ import "github.com/docker/docker/api/server/router"
 // buildRouter is a router to talk with the build controller
 type buildRouter struct {
 	backend Backend
-	daemon  experimentalProvider
+	daemon  experimentalAndGraphOptionsProvider
 	routes  []router.Route
 }
 
 // NewRouter initializes a new build router
-func NewRouter(b Backend, d experimentalProvider) router.Router {
+func NewRouter(b Backend, d experimentalAndGraphOptionsProvider) router.Router {
 	r := &buildRouter{backend: b, daemon: d}
 	r.initRoutes()
 	return r

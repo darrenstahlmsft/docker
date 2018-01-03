@@ -213,6 +213,18 @@ func (br *buildRouter) postBuild(ctx context.Context, w http.ResponseWriter, r *
 		return validationError{errors.New("squash is only supported with experimental mode")}
 	}
 
+	if runtime.GOOS == "windows" {
+		if buildOptions.StorageOpt == nil {
+			buildOptions.StorageOpt = make(map[string]string)
+		}
+		for _, v := range br.daemon.GetGraphOptions() {
+			opt := strings.SplitN(v, "=", 2)
+			if _, ok := buildOptions.StorageOpt[opt[0]]; !ok {
+				buildOptions.StorageOpt[opt[0]] = opt[1]
+			}
+		}
+	}
+
 	out := io.Writer(output)
 	if buildOptions.SuppressOutput {
 		out = notVerboseBuffer
